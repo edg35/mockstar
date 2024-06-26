@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { chatSession } from "@/utils/geminiaimodel";
+import { LoaderCircle } from "lucide-react";
 import { useState } from 'react';
 
 function AddNewInterview() {
@@ -16,12 +18,20 @@ function AddNewInterview() {
     const [jobPosition, setJobPosition] = useState("");
     const [jobDescription, setJobDescription] = useState("");
     const [yearsOfExperience, setYearsOfExperience] = useState(0);
+    const [loading, setLoading] = useState(false);
 
-    const onSubmit = (e) => {
+    const onSubmit = async(e) => {
+        setLoading(true);
         e.preventDefault();
         console.log("Job Position: ", jobPosition);
         console.log("Job Description: ", jobDescription);
         console.log("Years of Experience: ", yearsOfExperience);
+
+        const InputPrompt = "Job Position: " + jobPosition + ", Job Description: " + jobDescription + ", Years Experience: " + yearsOfExperience + ". From this information, can you give me " + process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT + " interview questions and answers in json format. Give question and answer as fields in json";
+        const result = await chatSession.sendMessage(InputPrompt);
+        const mockJsonRes = (result.response.text()).replace('```json','').replace('```', ''); 
+        console.log(JSON.parse(mockJsonRes));
+        setLoading(false);
     }
 
   return (
@@ -52,7 +62,13 @@ function AddNewInterview() {
                 </div>
                 <div className="flex gap-5 justify-end my-5">
                     <Button type="button" variant="ghost" onClick={() => setOpenDialog(false)}>Cancle</Button>
-                    <Button type="submit">Start Interview</Button>
+                    <Button type="submit" disabled={loading}>
+                    {loading ? 
+                        <>
+                            <LoaderCircle className="animate-spin"/> Generating
+                        </>: 'Start Interview'
+                    }
+                    </Button>
                 </div>
                 </form>
             </DialogDescription>
