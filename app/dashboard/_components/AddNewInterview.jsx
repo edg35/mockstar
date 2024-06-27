@@ -9,9 +9,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { db } from "@/utils/db";
 import { chatSession } from "@/utils/geminiaimodel";
+import { MockInterview } from "@/utils/schema";
+import { useUser } from "@clerk/nextjs";
 import { LoaderCircle } from "lucide-react";
+import moment from "moment";
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 function AddNewInterview() {
     const [openDialog, setOpenDialog] = useState(false);
@@ -19,18 +24,37 @@ function AddNewInterview() {
     const [jobDescription, setJobDescription] = useState("");
     const [yearsOfExperience, setYearsOfExperience] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [jsonResponse, setJsonResponse] = useState([]);
+    const {user} = useUser();
 
     const onSubmit = async(e) => {
         setLoading(true);
         e.preventDefault();
-        console.log("Job Position: ", jobPosition);
-        console.log("Job Description: ", jobDescription);
-        console.log("Years of Experience: ", yearsOfExperience);
 
         const InputPrompt = "Job Position: " + jobPosition + ", Job Description: " + jobDescription + ", Years Experience: " + yearsOfExperience + ". From this information, can you give me " + process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT + " interview questions and answers in json format. Give question and answer as fields in json";
         const result = await chatSession.sendMessage(InputPrompt);
-        const mockJsonRes = (result.response.text()).replace('```json','').replace('```', ''); 
-        console.log(JSON.parse(mockJsonRes));
+        const mockJsonRes = (result.response.text()).replace('```json','').replace('```', '');
+        setJsonResponse(mockJsonRes);
+        
+        if(mockJsonRes) {
+            const dbRes = await db.insert(MockInterview).values({
+                mockId: uuidv4(),
+                jsonMockRes: mockJsonRes,
+                jobPosition: jobPosition,
+                jobDescription: jobDescription,
+                jobExperience: yearsOfExperience,
+                createdBy: user?.primaryEmailAddress?.emailAddress,
+                createdAt: moment().format('DD-MM-YYYY'),
+            }).returning({mockId:MockInterview.mockId});
+
+            console.log("inserted:", dbRes);
+            if(dbRes) {
+                setOpenDialog(false);
+            }
+        } else {
+            console.log("Error in getting response");
+        }
+
         setLoading(false);
     }
 
