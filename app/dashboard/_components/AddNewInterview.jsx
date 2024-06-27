@@ -15,6 +15,7 @@ import { MockInterview } from "@/utils/schema";
 import { useUser } from "@clerk/nextjs";
 import { LoaderCircle } from "lucide-react";
 import moment from "moment";
+import { useRouter } from "next/navigation";
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,6 +27,7 @@ function AddNewInterview() {
     const [loading, setLoading] = useState(false);
     const [jsonResponse, setJsonResponse] = useState([]);
     const {user} = useUser();
+    const router = useRouter();
 
     const onSubmit = async(e) => {
         setLoading(true);
@@ -50,6 +52,7 @@ function AddNewInterview() {
             console.log("inserted:", dbRes);
             if(dbRes) {
                 setOpenDialog(false);
+                router.push('/dashboard/interview/' + dbRes[0]?.mockId);
             }
         } else {
             console.log("Error in getting response");
