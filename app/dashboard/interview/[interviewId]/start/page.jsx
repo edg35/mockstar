@@ -1,7 +1,9 @@
 "use client"
+import { Button } from "@/components/ui/button";
 import { db } from "@/utils/db";
 import { MockInterview } from "@/utils/schema";
 import { eq } from "drizzle-orm";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import QuestionSection from "./_components/questionSection";
 import RecordAnswerSection from "./_components/recordAnswerSecton";
@@ -22,12 +24,11 @@ function InterviewStart({params}) {
   const getInterviewDetails = async() => {
     const result = await db.select().from(MockInterview).where(eq(MockInterview.mockId, params.interviewId));
     const jsonMockRes = JSON.parse(result[0].jsonMockRes);
-    console.log(jsonMockRes);
     setMockInterviewQuestion(jsonMockRes);
     setInterviewData(result[0]);
   }
 
-  return (
+  return mockInterviewQuestion&&(
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Questions */}
@@ -41,10 +42,24 @@ function InterviewStart({params}) {
         <div>
             <RecordAnswerSection
                 mockInterviewQuestion={mockInterviewQuestion}
-                activeQuestion={activeQuestion} 
+                activeQuestion={activeQuestion}
+                interviewData={interviewData}
             />
         </div>
       </div>
+        <div className="flex justify-end gap-6">
+            {activeQuestion != 0&&<Button
+                onClick={() => setActiveQuestion(activeQuestion - 1)}
+            >
+                Previous Question
+            </Button>}
+            {activeQuestion != mockInterviewQuestion.length - 1&&<Button
+                onClick={() => setActiveQuestion(activeQuestion + 1)}
+            >
+                Next Question
+            </Button>}
+            {activeQuestion === mockInterviewQuestion.length - 1&&<Link href={"/dashboard/interview/"+params.interviewId+"/feedback"}><Button className="bg-green-500">End Interview</Button></Link>}
+        </div>
     </div>
   )
 }

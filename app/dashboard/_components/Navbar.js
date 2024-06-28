@@ -2,14 +2,9 @@
 import { UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
 
 function Navbar() {
     const path = usePathname();
-
-    useEffect(() => {
-        console.log(path);
-    })
   return (
     <div className="flex p-4 items-center justify-between bg-secondary shadow-sm">
       <Image src={'/logo.svg'} width={40} height={20} alt='logo' />
