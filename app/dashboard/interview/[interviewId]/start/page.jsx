@@ -4,6 +4,7 @@ import { MockInterview } from "@/utils/schema";
 import { eq } from "drizzle-orm";
 import { useEffect, useState } from "react";
 import QuestionSection from "./_components/questionSection";
+import RecordAnswerSection from "./_components/recordAnswerSecton";
 
 function InterviewStart({params}) {
 
@@ -38,7 +39,10 @@ function InterviewStart({params}) {
         </div>
         {/* Video and audio recording section */}
         <div>
-
+            <RecordAnswerSection
+                mockInterviewQuestion={mockInterviewQuestion}
+                activeQuestion={activeQuestion} 
+            />
         </div>
       </div>
     </div>
