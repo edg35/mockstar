@@ -49,8 +49,17 @@ export async function createNewInterview(formData, userEmail) {
   }
 }
 
-// TODO: implement delete method for interviews
-export async function deleteInterview() {}
+export async function deleteInterviewAPI(interviewId) {
+  const deleteInterview = await db
+    .delete(MockInterview)
+    .where(eq(MockInterview.mockId, interviewId));
+
+  const deleteFeedback = await db
+    .delete(UserAnswer)
+    .where(eq(UserAnswer.mockId, interviewId));
+
+  return { interview: deleteInterview, feedback: deleteFeedback };
+}
 
 export async function getInterviewDetails(interviewId) {
   const result = await db
@@ -63,7 +72,6 @@ export async function getInterviewDetails(interviewId) {
   return { mockInterviewQuestion: jsonMockRes, interviewData: result[0] };
 }
 
-// TODO: implement feedback page api
 export async function getInterviewFeedback(interviewId) {
   const feedback = await db
     .select()
@@ -77,4 +85,14 @@ export async function getInterviewFeedback(interviewId) {
   );
 
   return { feedbackList: feedback, score: feedbackScore };
+}
+
+export async function getInterviewListAPI(userEmail) {
+  const result = await db
+    .select()
+    .from(MockInterview)
+    .where(eq(MockInterview.createdBy, userEmail))
+    .orderBy(MockInterview.id);
+
+  return result;
 }

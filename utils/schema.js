@@ -22,16 +22,3 @@ export const UserAnswer = pgTable("userAnswer", {
   userEmail: varchar("userEmail").notNull(),
   createdAt: varchar("createdAt").notNull(),
 });
-
-// TODO: make and eport schema to db for cover letters
-
-export const CoverLetter = pgTable("coverLetter", {
-  id: serial("id").primaryKey(),
-  jsonCoverLetter: text("jsonCoverLetter").notNull(),
-  jobPosition: varchar("jobPosition").notNull(),
-  jobDescription: varchar("jobDescription").notNull(),
-  jobExperience: varchar("jobExperience").notNull(),
-  userEmail: varchar("userEmail").notNull(),
-  createdAt: varchar("createdAt").notNull(),
-  letterId: varchar("letterId").notNull(),
-});

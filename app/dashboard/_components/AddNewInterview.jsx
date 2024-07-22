@@ -26,9 +26,6 @@ function AddNewInterview() {
   };
   const [formState, setFormState] = useState(initialFormState);
   const [openDialog, setOpenDialog] = useState(false);
-  const [jobPosition, setJobPosition] = useState("");
-  const [jobDescription, setJobDescription] = useState("");
-  const [yearsOfExperience, setYearsOfExperience] = useState(0);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast;
   const { user } = useUser();
