@@ -17,12 +17,6 @@ function InterviewList() {
     user && getInterviewList();
   }, [user]);
 
-  /**
-   * getInterviewList callback function
-   * @param {user, db}
-   * @return null
-   */
-
   const getInterviewList = async () => {
     // Get user interview information from database
     const result = await getInterviewListAPI(
