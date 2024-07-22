@@ -15,24 +15,6 @@ export default function Home() {
               Leverage the power of generative AI to prepare for your next
               interview efficiently and effectively.
             </p>
-            <a
-              href="#"
-              className="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900"
-            >
-              Get started
-              <svg
-                className="w-5 h-5 ml-2 -mr-1"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            </a>
             <Button>Get Started Now</Button>
           </div>
           <div className="hidden lg:mt-0 lg:col-span-5 lg:flex">
@@ -51,15 +33,14 @@ export default function Home() {
               We didn't reinvent the wheel
             </h2>
             <p className="mb-4">
-              We are strategists, designers and developers. Innovators and
-              problem solvers. Small enough to be simple and quick, but big
-              enough to deliver the scope you want at the pace you need. Small
-              enough to be simple and quick, but big enough to deliver the scope
-              you want at the pace you need.
+              We just made it more efficient. Mockstar is a platform that helps
+              you prepare for your next interview by providing you with
+              generative AI-powered questions and answers. We help you practice
+              for your interview in a way that is both efficient and effective.
             </p>
             <p>
-              We are strategists, designers and developers. Innovators and
-              problem solvers. Small enough to be simple and quick.
+              Our small team will continue to grow and tailor the experience to
+              fit your needs.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-8">
@@ -81,10 +62,11 @@ export default function Home() {
         <div className="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
           <div className="mx-auto max-w-screen-sm text-center">
             <h2 className="mb-4 text-4xl tracking-tight font-extrabold leading-tight text-gray-900 dark:text-white">
-              Start your free trial today
+              Ready to get started?
             </h2>
             <p className="mb-6 font-light text-gray-500 dark:text-gray-400 md:text-lg">
-              Try Flowbite Platform for 30 days. No credit card required.
+              Sign up for a free account and start practicing for your next
+              interview.
             </p>
             <Button>Start Practicing</Button>
           </div>
@@ -98,7 +80,7 @@ export default function Home() {
               Designed to work for people like you
             </h2>
             <p className="text-gray-500 sm:text-xl dark:text-gray-400">
-              Here at Mockstar, our main goal is to im porve your interview
+              Here at Mockstar, our main goal is to improve your interview
               skills and get you hired. We have a wide range of features that
               you can use to your advantage.
             </p>
@@ -120,12 +102,11 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="mb-2 text-xl font-bold dark:text-white">
-                Marketing
+                Interview Questions
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
-                Plan it, create it, launch it. Collaborate seamlessly with all
-                the organization and hit your marketing goals every month with
-                our marketing plan.
+                Get access to a wide range of interview questions that you can
+                use to practice for your next interview.
               </p>
             </div>
             <div>
@@ -139,10 +120,12 @@ export default function Home() {
                   <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
                 </svg>
               </div>
-              <h3 className="mb-2 text-xl font-bold dark:text-white">Legal</h3>
+              <h3 className="mb-2 text-xl font-bold dark:text-white">
+                Personalized Feedback
+              </h3>
               <p className="text-gray-500 dark:text-gray-400">
-                Protect your organization, devices and stay compliant with our
-                structured workflows and custom permissions made for you.
+                Get personalized feedback on your answers and improve your
+                interview skills.
               </p>
             </div>
             <div>
@@ -162,11 +145,11 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="mb-2 text-xl font-bold dark:text-white">
-                Business Automation
+                Interview Tips
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
-                Auto-assign tasks, send Slack messages, and much more. Now power
-                up with hundreds of new templates to help you get started.
+                Get access to interview tips and tricks that can help you ace
+                your next interview.
               </p>
             </div>
             <div>
@@ -186,11 +169,10 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="mb-2 text-xl font-bold dark:text-white">
-                Finance
+                Practice for Any Job
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
-                Audit-proof software built for critical financial operations
-                like month-end close and quarterly budgeting.
+                Practice for any job, from software engineering to marketing.
               </p>
             </div>
             <div>
@@ -205,11 +187,10 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="mb-2 text-xl font-bold dark:text-white">
-                Enterprise Design
+                Security
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
-                Craft beautiful, delightful experiences for both marketing and
-                product with real cross-company collaboration.
+                We take security seriously. Your data is safe with us.
               </p>
             </div>
             <div>
@@ -228,12 +209,10 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="mb-2 text-xl font-bold dark:text-white">
-                Operations
+                Privacy
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
-                Keep your company’s lights on with customizable, iterative, and
-                structured workflows built for all efficient teams and
-                individual.
+                We value your privacy. Your data is yours and yours alone.
               </p>
             </div>
           </div>
