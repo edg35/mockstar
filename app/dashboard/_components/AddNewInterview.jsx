@@ -1,109 +1,161 @@
-"use client"
+"use client";
+import { createNewInterview } from "@/app/_actions";
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { db } from "@/utils/db";
-import { chatSession } from "@/utils/geminiaimodel";
-import { MockInterview } from "@/utils/schema";
+import { useToast } from "@/components/ui/use-toast";
 import { useUser } from "@clerk/nextjs";
 import { LoaderCircle } from "lucide-react";
-import moment from "moment";
 import { useRouter } from "next/navigation";
-import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { useState } from "react";
 
 function AddNewInterview() {
-    const [openDialog, setOpenDialog] = useState(false);
-    const [jobPosition, setJobPosition] = useState("");
-    const [jobDescription, setJobDescription] = useState("");
-    const [yearsOfExperience, setYearsOfExperience] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [jsonResponse, setJsonResponse] = useState([]);
-    const {user} = useUser();
-    const router = useRouter();
+  // Declare state variables
 
-    const onSubmit = async(e) => {
-        setLoading(true);
-        e.preventDefault();
+  const initialFormState = {
+    jobPosition: "",
+    jobDescription: "",
+    yearsOfExperience: 0,
+  };
+  const [formState, setFormState] = useState(initialFormState);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [jobPosition, setJobPosition] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [yearsOfExperience, setYearsOfExperience] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast;
+  const { user } = useUser();
+  const router = useRouter();
 
-        const InputPrompt = "Job Position: " + jobPosition + ", Job Description: " + jobDescription + ", Years Experience: " + yearsOfExperience + ". From this information, can you give me " + process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT + " interview questions and answers in json format. Give question and answer as fields in json";
-        const result = await chatSession.sendMessage(InputPrompt);
-        const mockJsonRes = (result.response.text()).replace('```json','').replace('```', '');
-        setJsonResponse(mockJsonRes);
-        
-        if(mockJsonRes) {
-            const dbRes = await db.insert(MockInterview).values({
-                mockId: uuidv4(),
-                jsonMockRes: mockJsonRes,
-                jobPosition: jobPosition,
-                jobDescription: jobDescription,
-                jobExperience: yearsOfExperience,
-                createdBy: user?.primaryEmailAddress?.emailAddress,
-                createdAt: moment().format('DD-MM-YYYY'),
-            }).returning({mockId:MockInterview.mockId});
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormState({
+      ...formState,
+      [name]: value,
+    });
+  };
 
-            console.log("inserted:", dbRes);
-            if(dbRes) {
-                setOpenDialog(false);
-                router.push('/dashboard/interview/' + dbRes[0]?.mockId);
-            }
-        } else {
-            console.log("Error in getting response");
-        }
+  /**
+   * handle creaton of a new interview in system
+   * @param {*} e
+   * @return null
+   */
 
-        setLoading(false);
+  const onSubmit = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+
+    // Fill in AI prompt user information provided, then send prompt message
+    const createdInterview = await createNewInterview(
+      formState,
+      user?.primaryEmailAddress?.emailAddress
+    );
+
+    if (createdInterview) {
+      setOpenDialog(false);
+      console.log(createdInterview);
+      router.push("/dashboard/interview/" + createdInterview[0]?.mockId);
+    } else {
+      toast({
+        title: "Error",
+        description: "An error occurred while creating interview",
+        status: "error",
+      });
     }
+
+    // close the dialog
+    setLoading(false);
+  };
 
   return (
     <div>
-      <div className="p-10 border rounded-lg bg-secondary hover:scale-105 hover:shadow-sm transition-all" onClick={() => setOpenDialog(true)}>
+      <div
+        className="p-10 border rounded-lg bg-secondary hover:scale-105 hover:shadow-sm transition-all"
+        onClick={() => setOpenDialog(true)}
+      >
         <h2 className="text-lg text-center">+ Add New</h2>
       </div>
       <Dialog open={openDialog}>
         <DialogContent className="max-w-xl">
-            <DialogHeader>
-            <DialogTitle className="text-2xl">Tell us more about your job interview</DialogTitle>
+          <DialogHeader>
+            <DialogTitle className="text-2xl">
+              Tell us more about your job interview
+            </DialogTitle>
             <DialogDescription>
-                <form onSubmit={onSubmit}>
+              <form onSubmit={onSubmit}>
                 <div>
-                    <h2 className="text-gray-500">Add details about your job position, description, and years of experience</h2>
-                    <div className="mt-7 my-2">
-                        <label>Job Position</label>
-                        <Input placeholder="Ex. Full Stack Developer" required onChange={(event) => setJobPosition(event.target.value)} />
-                    </div>
-                    <div className="my-2">
-                        <label>Job Descriptionn</label>
-                        <Textarea placeholder="Ex. React, Angular, NodeJs" required onChange={(event) => setJobDescription(event.target.value)}/>
-                    </div>
-                    <div className="my-2">
-                        <label>Years of Experience</label>
-                        <Input placeholder="Ex. 5" type="number" max="100" required onChange={(event) => setYearsOfExperience(event.target.value)}/>
-                    </div>
+                  <h2 className="text-gray-500">
+                    Add details about your job position, description, and years
+                    of experience
+                  </h2>
+                  <div className="mt-7 my-2">
+                    <label>Job Position</label>
+                    <Input
+                      placeholder="Ex. Full Stack Developer"
+                      name="jobPosition"
+                      id="jobPosition"
+                      value={formState.jobPosition}
+                      required
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="my-2">
+                    <label>Job Description</label>
+                    <Textarea
+                      placeholder="Ex. React, Angular, NodeJs"
+                      name="jobDescription"
+                      id="jobDescription"
+                      value={formState.jobDescription}
+                      required
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="my-2">
+                    <label>Years of Experience</label>
+                    <Input
+                      placeholder="Ex. 5"
+                      name="yearsOfExperience"
+                      id="yearsOfExperience"
+                      type="number"
+                      value={formState.yearsOfExperience}
+                      max="100"
+                      required
+                      onChange={handleInputChange}
+                    />
+                  </div>
                 </div>
                 <div className="flex gap-5 justify-end my-5">
-                    <Button type="button" variant="ghost" onClick={() => setOpenDialog(false)}>Cancle</Button>
-                    <Button type="submit" disabled={loading}>
-                    {loading ? 
-                        <>
-                            <LoaderCircle className="animate-spin"/> Generating
-                        </>: 'Start Interview'
-                    }
-                    </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setOpenDialog(false)}
+                  >
+                    Cancle
+                  </Button>
+                  <Button type="submit" disabled={loading}>
+                    {loading ? (
+                      <>
+                        <LoaderCircle className="animate-spin" /> Generating
+                      </>
+                    ) : (
+                      "Start Interview"
+                    )}
+                  </Button>
                 </div>
-                </form>
+              </form>
             </DialogDescription>
-            </DialogHeader>
+          </DialogHeader>
         </DialogContent>
-        </Dialog>
+      </Dialog>
     </div>
-  )
+  );
 }
 
-export default AddNewInterview
+export default AddNewInterview;
