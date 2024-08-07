@@ -86,20 +86,6 @@ export async function fetchFeedback(interviewId) {
 
   return { feedbackList: feedback, score: feedbackScore };
 }
-export async function getInterviewFeedback(interviewId) {
-  const feedback = await db
-    .select()
-    .from(UserAnswer)
-    .where(eq(UserAnswer.mockId, interviewId))
-    .orderBy(UserAnswer.id);
-
-  const feedbackScore = feedback.reduce(
-    (total, item) => total + Number(item.rating),
-    0
-  );
-
-  return { feedbackList: feedback, score: feedbackScore };
-}
 
 export async function getInterviewListAPI(userEmail) {
   const result = await db
