@@ -1,7 +1,8 @@
 "use server";
 import { db } from "@/utils/db";
 import { chatSession } from "@/utils/geminiaimodel";
-import { MockInterview } from "@/utils/schema";
+import { MockInterview, UserAnswer } from "@/utils/schema";
+import { eq } from "drizzle-orm";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 
@@ -48,8 +49,13 @@ export async function createNewInterview(formData, userEmail) {
   }
 }
 
-// TODO: implement delete method for interviews
-export async function deleteInterview() {}
+export async function deleteInterview(interviewId) {
+  const result = await db
+    .delete(MockInterview)
+    .where(eq(MockInterview.mockId, interviewId));
+
+  return result;
+}
 
 export async function getInterviewDetails(interviewId) {
   const result = await db
@@ -62,4 +68,17 @@ export async function getInterviewDetails(interviewId) {
   return { mockInterviewQuestion: jsonMockRes, interviewData: result[0] };
 }
 
-// TODO: implement feedback page api
+export async function fetchFeedback(interviewId) {
+  const feedback = await db
+    .select()
+    .from(UserAnswer)
+    .where(eq(UserAnswer.mockId, interviewId))
+    .orderBy(UserAnswer.id);
+
+  const feedbackScore = feedback.reduce(
+    (total, item) => total + Number(item.rating),
+    0
+  );
+
+  return { feedbackList: feedback, score: feedbackScore };
+}

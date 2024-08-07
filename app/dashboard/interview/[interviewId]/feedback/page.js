@@ -1,14 +1,12 @@
 "use client";
 
+import { fetchFeedback } from "@/app/_actions";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { db } from "@/utils/db";
-import { UserAnswer } from "@/utils/schema";
-import { eq } from "drizzle-orm";
 import { ChevronsUpDown } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -22,19 +20,9 @@ function feedbackPage({ params }) {
   }, []);
 
   const getFeedback = async () => {
-    const feedback = await db
-      .select()
-      .from(UserAnswer)
-      .where(eq(UserAnswer.mockId, params.interviewId))
-      .orderBy(UserAnswer.id);
-
-    const feedbackScore = feedback.reduce(
-      (total, item) => total + Number(item.rating),
-      0
-    );
-
-    setFeedbackList(feedback);
-    setScore(feedbackScore);
+    const feedback = await fetchFeedback(params.interviewId);
+    setFeedbackList(feedback.feedbackList);
+    setScore(feedback.score);
   };
 
   return (

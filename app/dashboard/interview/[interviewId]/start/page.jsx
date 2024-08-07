@@ -11,11 +11,15 @@ function InterviewStart({ params }) {
   const [mockInterviewQuestion, setMockInterviewQuestion] = useState();
   const [activeQuestion, setActiveQuestion] = useState(0);
 
-  useEffect(async () => {
+  const fetchInterviewDetails = async () => {
     const interviewDetails = await getInterviewDetails(params.interviewId);
     setMockInterviewQuestion(interviewDetails.mockInterviewQuestion);
     setInterviewData(interviewDetails.interviewData);
-  }, []);
+  };
+
+  useEffect(() => {
+    fetchInterviewDetails();
+  }, [params.interviewId]);
 
   return (
     mockInterviewQuestion && (
