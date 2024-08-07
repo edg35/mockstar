@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 function Footer() {
   return (
     <footer className="p-4 bg-white md:p-8 lg:p-10 dark:bg-gray-800">
@@ -6,11 +8,17 @@ function Footer() {
           href="#"
           className="flex justify-center items-center text-2xl font-semibold text-gray-900 dark:text-white"
         >
+          <Image
+            src={"/logo.svg"}
+            alt="Flowbite"
+            width={40}
+            height={40}
+            className="mr-4"
+          />
           Mockstar
         </a>
         <p className="my-6 text-gray-500 dark:text-gray-400">
-          Open-source library of over 400+ web components and interactive
-          elements built for better web.
+          A standalone software for all your job search needs.
         </p>
         <ul className="flex flex-wrap justify-center items-center mb-6 text-gray-900 dark:text-white">
           <li>
