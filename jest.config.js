@@ -6,7 +6,7 @@ module.exports = {
     "^@/(.*)$": "<rootDir>/$1",
   },
   transform: {
-    "^.+\\.jsx?$": "babel-jest",
+    "^.+\\.jsx?$": ["babel-jest", { configFile: "./babel.jest.config.js" }],
   },
   transformIgnorePatterns: [
     "/node_modules/(?!(drizzle-orm|@neondatabase)/)",
