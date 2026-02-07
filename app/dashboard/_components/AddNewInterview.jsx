@@ -1,5 +1,4 @@
 "use client";
-import { createNewInterview } from "@/app/_actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -50,14 +49,18 @@ function AddNewInterview() {
     e.preventDefault();
 
     // Fill in AI prompt user information provided, then send prompt message
-    const createdInterview = await createNewInterview(
-      formState,
-      user?.primaryEmailAddress?.emailAddress
-    );
+    const res = await fetch("/api/interviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...formState,
+        userEmail: user?.primaryEmailAddress?.emailAddress,
+      }),
+    });
+    const createdInterview = await res.json();
 
-    if (createdInterview) {
+    if (res.ok && createdInterview) {
       setOpenDialog(false);
-      console.log(createdInterview);
       router.push("/dashboard/interview/" + createdInterview[0]?.mockId);
     } else {
       toast({

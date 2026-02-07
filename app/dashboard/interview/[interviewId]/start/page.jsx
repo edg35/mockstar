@@ -1,5 +1,4 @@
 "use client";
-import { getInterviewDetails } from "@/app/_actions";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -12,7 +11,8 @@ function InterviewStart({ params }) {
   const [activeQuestion, setActiveQuestion] = useState(0);
 
   const fetchInterviewDetails = async () => {
-    const interviewDetails = await getInterviewDetails(params.interviewId);
+    const res = await fetch(`/api/interviews/${params.interviewId}`);
+    const interviewDetails = await res.json();
     setMockInterviewQuestion(interviewDetails.mockInterviewQuestion);
     setInterviewData(interviewDetails.interviewData);
   };

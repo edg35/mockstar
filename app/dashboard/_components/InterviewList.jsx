@@ -1,6 +1,5 @@
 "use client";
 
-import { getInterviewListAPI } from "@/app/_actions";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import InterviewItemCard from "./InterviewItemCard";
@@ -19,9 +18,10 @@ function InterviewList() {
 
   const getInterviewList = async () => {
     // Get user interview information from database
-    const result = await getInterviewListAPI(
-      user?.primaryEmailAddress?.emailAddress
+    const res = await fetch(
+      `/api/interviews?email=${encodeURIComponent(user?.primaryEmailAddress?.emailAddress)}`
     );
+    const result = await res.json();
 
     // Save results in state
     setInterviewList(result);

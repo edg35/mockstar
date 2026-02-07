@@ -1,6 +1,5 @@
 "use client";
 
-import { fetchFeedback } from "@/app/_actions";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -20,7 +19,8 @@ function feedbackPage({ params }) {
   }, []);
 
   const getFeedback = async () => {
-    const feedback = await fetchFeedback(params.interviewId);
+    const res = await fetch(`/api/interviews/${params.interviewId}/feedback`);
+    const feedback = await res.json();
     setFeedbackList(feedback.feedbackList);
     setScore(feedback.score);
   };

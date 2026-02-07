@@ -1,4 +1,3 @@
-import { deleteInterviewAPI } from "@/app/_actions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,9 +19,12 @@ function InterviewItemCard({ interview }) {
   const { toast } = useToast();
 
   const deleteInterview = async () => {
-    const removed = await deleteInterviewAPI(interview?.mockId);
+    const res = await fetch(`/api/interviews/${interview?.mockId}`, {
+      method: "DELETE",
+    });
+    const removed = await res.json();
 
-    if (removed) {
+    if (res.ok && removed) {
       window.location.reload();
       toast({
         title: "Interview Deleted",
