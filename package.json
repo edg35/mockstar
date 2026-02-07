@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "db:push": "npx drizzle-kit push",
-    "db:studio": "npx drizzle-kit studio"
+    "db:studio": "npx drizzle-kit studio",
+    "test": "jest --verbose",
+    "test:watch": "jest --watch --verbose"
   },
   "dependencies": {
     "@clerk/nextjs": "^5.1.6",
@@ -34,7 +36,14 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.28.6",
+    "@babel/preset-env": "^7.29.0",
+    "@babel/preset-react": "^7.28.5",
+    "@jest/globals": "^30.2.0",
+    "babel-jest": "^30.2.0",
     "drizzle-kit": "^0.22.7",
+    "jest": "^30.2.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1"
   }
