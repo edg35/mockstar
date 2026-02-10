@@ -3,7 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -40,7 +40,10 @@ import {
   Clock,
   Loader2,
   ExternalLink,
+  Plus,
 } from "lucide-react";
+import AddNewInterview from "../../_components/AddNewInterview";
+import InterviewItemCard from "../../_components/InterviewItemCard";
 
 const STATUS_CONFIG = {
   wishlist: { label: "Wishlist", bg: "bg-gray-100", text: "text-gray-700", dot: "bg-gray-400" },
@@ -101,6 +104,9 @@ function ApplicationDetailPage({ params }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showInterviewDialog, setShowInterviewDialog] = useState(false);
+  const [interviews, setInterviews] = useState([]);
+  const [interviewsLoading, setInterviewsLoading] = useState(true);
 
   const userId = user?.primaryEmailAddress?.emailAddress;
 
@@ -112,6 +118,7 @@ function ApplicationDetailPage({ params }) {
       return;
     }
     fetchApplication();
+    fetchInterviews();
   }, [isLoaded, userId]);
 
   async function fetchApplication() {
@@ -135,6 +142,24 @@ function ApplicationDetailPage({ params }) {
       setIsLoading(false);
     }
   }
+
+  const fetchInterviews = useCallback(async () => {
+    if (!userId) return;
+    setInterviewsLoading(true);
+    try {
+      const res = await fetch(
+        `/api/applications/${id}/interviews?userId=${encodeURIComponent(userId)}`
+      );
+      const result = await res.json();
+      if (res.ok && result.success) {
+        setInterviews(result.data);
+      }
+    } catch {
+      // silently fail -- interviews are supplementary
+    } finally {
+      setInterviewsLoading(false);
+    }
+  }, [id, userId]);
 
   async function handleDelete() {
     setIsDeleting(true);
@@ -260,7 +285,7 @@ function ApplicationDetailPage({ params }) {
             Edit
           </Button>
           <Button
-            onClick={() => router.push(`/dashboard/applications/${id}/practice`)}
+            onClick={() => setShowInterviewDialog(true)}
           >
             <Mic className="h-4 w-4 mr-2" />
             Practice Interview
@@ -368,6 +393,43 @@ function ApplicationDetailPage({ params }) {
 
         {/* Right Column */}
         <div className="space-y-6">
+          {/* Mock Interviews Card */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-lg">Mock Interviews</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowInterviewDialog(true)}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                New Practice
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {interviewsLoading ? (
+                <div className="space-y-3">
+                  <Skeleton className="h-[80px] w-full rounded-lg" />
+                  <Skeleton className="h-[80px] w-full rounded-lg" />
+                </div>
+              ) : interviews.length === 0 ? (
+                <p className="text-sm text-muted-foreground italic">
+                  No mock interviews yet. Click Practice Interview to start one.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {interviews.map((interview) => (
+                    <InterviewItemCard
+                      key={interview.id}
+                      interview={interview}
+                      onDelete={fetchInterviews}
+                    />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Notes Card */}
           <Card>
             <CardHeader>
@@ -412,6 +474,13 @@ function ApplicationDetailPage({ params }) {
           </Button>
         </Link>
       </div>
+
+      {/* Interview Dialog */}
+      <AddNewInterview
+        application={application}
+        open={showInterviewDialog}
+        onOpenChange={setShowInterviewDialog}
+      />
     </div>
   );
 }

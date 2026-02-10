@@ -71,9 +71,9 @@ export const MockInterview = pgTable("mockInterview", {
   createdBy: varchar("createdBy").notNull(),
   createdAt: varchar("createdAt").notNull(),
   mockId: varchar("mockId").notNull(),
-  applicationId: integer("applicationId").references(
-    () => JobApplications.id
-  ),
+  applicationId: integer("applicationId")
+    .references(() => JobApplications.id)
+    .notNull(),
 });
 
 export const UserAnswer = pgTable("userAnswer", {

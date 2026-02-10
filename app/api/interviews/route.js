@@ -26,8 +26,15 @@ export async function GET(request) {
 
 // POST /api/interviews
 export async function POST(request) {
-  const { jobPosition, jobDescription, yearsOfExperience, userEmail } =
+  const { jobPosition, jobDescription, yearsOfExperience, userEmail, applicationId } =
     await request.json();
+
+  if (!applicationId) {
+    return NextResponse.json(
+      { error: "applicationId is required" },
+      { status: 400 }
+    );
+  }
 
   const InputPrompt =
     "Job Position: " +
@@ -65,6 +72,7 @@ export async function POST(request) {
         jobExperience: yearsOfExperience,
         createdBy: userEmail,
         createdAt: moment().format("DD-MM-YYYY"),
+        applicationId,
       })
       .returning({ mockId: MockInterview.mockId });
 

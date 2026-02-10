@@ -15,7 +15,7 @@ import { Trash2 } from "lucide-react";
 
 import Link from "next/link";
 
-function InterviewItemCard({ interview }) {
+function InterviewItemCard({ interview, onDelete }) {
   const { toast } = useToast();
 
   const deleteInterview = async () => {
@@ -25,7 +25,11 @@ function InterviewItemCard({ interview }) {
     const removed = await res.json();
 
     if (res.ok && removed) {
-      window.location.reload();
+      if (onDelete) {
+        onDelete();
+      } else {
+        window.location.reload();
+      }
       toast({
         title: "Interview Deleted",
         description: "Your interview has been successfully deleted",

@@ -13,9 +13,11 @@ import { useEffect, useState } from "react";
 function feedbackPage({ params }) {
   const [feedbackList, setFeedbackList] = useState([]);
   const [score, setScore] = useState(0);
+  const [applicationId, setApplicationId] = useState(null);
 
   useEffect(() => {
     getFeedback();
+    getInterviewData();
   }, []);
 
   const getFeedback = async () => {
@@ -24,6 +26,18 @@ function feedbackPage({ params }) {
     setFeedbackList(feedback.feedbackList);
     setScore(feedback.score);
   };
+
+  const getInterviewData = async () => {
+    const res = await fetch(`/api/interviews/${params.interviewId}`);
+    const data = await res.json();
+    if (data.interviewData?.applicationId) {
+      setApplicationId(data.interviewData.applicationId);
+    }
+  };
+
+  const returnUrl = applicationId
+    ? `/dashboard/applications/${applicationId}`
+    : "/dashboard";
 
   return (
     <div className="p-10">
@@ -79,8 +93,10 @@ function feedbackPage({ params }) {
             ))}
         </>
       )}
-      <Link href="/dashboard">
-        <Button className="mt-5">Return to Dashboard</Button>
+      <Link href={returnUrl}>
+        <Button className="mt-5">
+          {applicationId ? "Return to Application" : "Return to Dashboard"}
+        </Button>
       </Link>
     </div>
   );

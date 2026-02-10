@@ -13,10 +13,10 @@ import { useToast } from "@/components/ui/use-toast";
 import { useUser } from "@clerk/nextjs";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-function AddNewInterview() {
-  // Declare state variables
+function AddNewInterview({ application, open, onOpenChange }) {
+  const isControlled = application !== undefined;
 
   const initialFormState = {
     jobPosition: "",
@@ -30,6 +30,19 @@ function AddNewInterview() {
   const { user } = useUser();
   const router = useRouter();
 
+  const dialogOpen = isControlled ? open : openDialog;
+  const setDialogOpen = isControlled ? onOpenChange : setOpenDialog;
+
+  useEffect(() => {
+    if (application && open) {
+      setFormState({
+        jobPosition: application.jobTitle || "",
+        jobDescription: application.jobDescription || "",
+        yearsOfExperience: 0,
+      });
+    }
+  }, [application, open]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormState({
@@ -38,29 +51,23 @@ function AddNewInterview() {
     });
   };
 
-  /**
-   * handle creaton of a new interview in system
-   * @param {*} e
-   * @return null
-   */
-
   const onSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
 
-    // Fill in AI prompt user information provided, then send prompt message
     const res = await fetch("/api/interviews", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...formState,
         userEmail: user?.primaryEmailAddress?.emailAddress,
+        applicationId: application?.id,
       }),
     });
     const createdInterview = await res.json();
 
     if (res.ok && createdInterview) {
-      setOpenDialog(false);
+      setDialogOpen(false);
       router.push("/dashboard/interview/" + createdInterview[0]?.mockId);
     } else {
       toast({
@@ -70,19 +77,20 @@ function AddNewInterview() {
       });
     }
 
-    // close the dialog
     setLoading(false);
   };
 
   return (
     <div>
-      <div
-        className="p-10 border rounded-lg bg-secondary hover:scale-105 hover:shadow-sm transition-all"
-        onClick={() => setOpenDialog(true)}
-      >
-        <h2 className="text-lg text-center">+ Add New</h2>
-      </div>
-      <Dialog open={openDialog}>
+      {!isControlled && (
+        <div
+          className="p-10 border rounded-lg bg-secondary hover:scale-105 hover:shadow-sm transition-all"
+          onClick={() => setOpenDialog(true)}
+        >
+          <h2 className="text-lg text-center">+ Add New</h2>
+        </div>
+      )}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-xl">
           <DialogHeader>
             <DialogTitle className="text-2xl">
@@ -103,6 +111,7 @@ function AddNewInterview() {
                       id="jobPosition"
                       value={formState.jobPosition}
                       required
+                      readOnly={isControlled}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -114,6 +123,7 @@ function AddNewInterview() {
                       id="jobDescription"
                       value={formState.jobDescription}
                       required
+                      readOnly={isControlled}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -135,9 +145,9 @@ function AddNewInterview() {
                   <Button
                     type="button"
                     variant="ghost"
-                    onClick={() => setOpenDialog(false)}
+                    onClick={() => setDialogOpen(false)}
                   >
-                    Cancle
+                    Cancel
                   </Button>
                   <Button type="submit" disabled={loading}>
                     {loading ? (
